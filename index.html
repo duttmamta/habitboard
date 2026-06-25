@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HabitBoard — Press Your Day Into Shape</title>
+<meta name="description" content="A physical habit tracker with tactile buttons, LED feedback and a live display. Built for people who need to feel the work, not just track it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f5f0;
+    --sage: #4a6741;
+    --sage-light: #d4e0d2;
+    --amber: #c47b2b;
+    --muted: #7a7a72;
+    --rule: #d8d5ce;
+    --glow: #7ec87a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--sage);
+    text-decoration: none;
+    border: 1px solid var(--sage);
+    padding: 0.45rem 1rem;
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--sage); color: #fff; }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 90vh;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .hero-text {
+    padding: 5rem 3rem 4rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.6rem, 4.5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--sage);
+    font-weight: 300;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 38ch;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--sage);
+    color: #fff;
+    padding: 0.8rem 1.8rem;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover { background: #3a5332; }
+
+  .btn-ghost {
+    color: var(--muted);
+    font-size: 0.88rem;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* HERO DEVICE VISUAL */
+  .hero-device {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #edeae4;
+    padding: 3rem;
+  }
+
+  .device-wrap {
+    position: relative;
+  }
+
+  /* Animated device illustration */
+  .device {
+    width: 140px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    padding: 14px 12px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  .device-screen {
+    background: #1a3a1a;
+    border-radius: 4px;
+    padding: 8px 6px;
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 7px;
+    color: #7ec87a;
+    text-align: center;
+    line-height: 1.5;
+    min-height: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .device-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .device-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .device-label {
+    flex: 1;
+    background: #1e1e1e;
+    border-radius: 3px;
+    height: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 5.5px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    letter-spacing: 0.05em;
+  }
+
+  .device-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #333;
+    transition: background 0.4s, box-shadow 0.4s;
+    flex-shrink: 0;
+  }
+
+  .device-led.on {
+    background: var(--glow);
+    box-shadow: 0 0 6px 2px rgba(126, 200, 122, 0.6);
+  }
+
+  .device-btn {
+    width: 12px;
+    height: 12px;
+    background: #444;
+    border-radius: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    border-bottom: 2px solid #222;
+  }
+
+  .device-btn:active { transform: translateY(1px); }
+
+  .device-usbc {
+    width: 20px;
+    height: 5px;
+    background: #111;
+    border-radius: 2px;
+    margin: 8px auto 0;
+  }
+
+  /* STATUS TEXT ANIM */
+  .screen-status { font-size: 6px; opacity: 0.7; }
+  .screen-main { font-size: 8px; font-weight: 500; }
+
+  /* HOW IT WORKS */
+  .section {
+    padding: 5rem 3rem;
+    border-bottom: 1px solid var(--rule);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  /* STEPS */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 3rem;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .step {
+    background: var(--paper);
+    padding: 2.5rem 2rem;
+  }
+
+  .step-icon {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .step h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .step p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* FEATURES */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .feature {
+    padding: 2rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  .feature-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--sage);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* WAITLIST */
+  .waitlist-section {
+    padding: 6rem 3rem;
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+  }
+
+  .waitlist-section .eyebrow { color: var(--sage-light); }
+
+  .waitlist-section h2 {
+    color: var(--paper);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .waitlist-section h2 em { color: var(--glow); }
+
+  .waitlist-sub {
+    color: #888;
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0;
+    max-width: 440px;
+    margin: 0 auto 1rem;
+    border: 1px solid #444;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .waitlist-form input {
+    flex: 1;
+    padding: 0.85rem 1.2rem;
+    background: #2a2a2a;
+    border: none;
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .waitlist-form input::placeholder { color: #666; }
+
+  .waitlist-form button {
+    padding: 0.85rem 1.4rem;
+    background: var(--sage);
+    border: none;
+    color: #fff;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .waitlist-form button:hover { background: #3a5332; }
+
+  .waitlist-note {
+    font-size: 0.78rem;
+    color: #555;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .waitlist-count {
+    display: inline-block;
+    margin-top: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: #666;
+    border: 1px solid #333;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+  }
+
+  .waitlist-count span { color: var(--glow); }
+
+  /* SUCCESS STATE */
+  .waitlist-success {
+    display: none;
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    color: var(--glow);
+    font-style: italic;
+  }
+
+  /* SPECS */
+  .specs-section {
+    padding: 5rem 3rem;
+    border-bottom: 1px solid var(--rule);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 3rem;
+    border: 1px solid var(--rule);
+  }
+
+  .spec-item {
+    padding: 2rem 1.5rem;
+    border-right: 1px solid var(--rule);
+    text-align: center;
+  }
+
+  .spec-item:last-child { border-right: none; }
+
+  .spec-val {
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--sage);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+  }
+
+  .spec-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer .nav-logo { color: var(--muted); }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer-links a {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .footer-links a:hover { color: var(--ink); }
+
+  /* PHOTO PLACEHOLDER */
+  .photo-placeholder {
+    background: #e5e2dc;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 280px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+    gap: 0.5rem;
+    margin-top: 3rem;
+  }
+
+  .photo-placeholder svg { opacity: 0.3; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-text { border-right: none; border-bottom: 1px solid var(--rule); padding: 3rem 1.5rem; }
+    .hero-device { padding: 2.5rem 1.5rem; min-height: 300px; }
+    .steps { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .specs-grid { grid-template-columns: repeat(2, 1fr); }
+    .spec-item:nth-child(2) { border-right: none; }
+    .section, .specs-section { padding: 3rem 1.5rem; }
+    .waitlist-section { padding: 4rem 1.5rem; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">HABITBOARD</a>
+  <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="eyebrow">Physical Habit Tracker</p>
+    <h1>Press your<br>habits into <em>existence.</em></h1>
+    <p class="hero-sub">HabitBoard is a desk device with real buttons, real LEDs, and a screen that tells you exactly where your day stands. No app. No phone. Just you and the work.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">Join the Waitlist</a>
+      <a href="#how" class="btn-ghost">See how it works →</a>
+    </div>
+  </div>
+
+  <div class="hero-device">
+    <div class="device-wrap">
+      <div class="device" id="device">
+        <div class="device-screen">
+          <div class="screen-status" id="screenStatus">TODAY</div>
+          <div class="screen-main" id="screenMain">Keep going...</div>
+        </div>
+        <div class="device-rows" id="deviceRows">
+          <!-- rows injected by JS -->
+        </div>
+        <div class="device-usbc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div id="how">
+<div class="section">
+  <div class="section-label">How it works</div>
+  <h2>One press. One habit.<br>One honest count.</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">📝</div>
+      <h3>Name your habits</h3>
+      <p>Write your daily tasks on the task-row slips. Change them whenever you like — no app update, no settings menu. Just write.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🔘</div>
+      <h3>Press when done</h3>
+      <p>Each row has a tactile button. Press it when you've completed that habit. The LED lights up. Press again to undo. It counts from the button, not the screen.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">✅</div>
+      <h3>Win your day</h3>
+      <p>Complete all your habits and the screen reads "Today's day WON." Miss any by 8pm and it's honest with you. Reset at midnight, automatically.</p>
+    </div>
+  </div>
+
+  <div class="photo-placeholder">
+    <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <rect x="3" y="5" width="18" height="14" rx="2" stroke-width="1.5"/>
+      <circle cx="12" cy="12" r="3" stroke-width="1.5"/>
+      <path d="M9 5V3h6v2" stroke-width="1.5"/>
+    </svg>
+    <div>PRODUCT PHOTOS COMING SOON</div>
+  </div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-label">Why physical</div>
+  <h2>Your phone is already<br>too many things.</h2>
+
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-tag">No distractions</div>
+      <h3>A device that only does one thing</h3>
+      <p>HabitBoard doesn't notify you, doesn't have a feed, doesn't have a settings page. It sits on your desk and waits for you to press a button. That's it.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-tag">Tactile feedback</div>
+      <h3>You feel the progress</h3>
+      <p>There's something different about pressing a physical button versus tapping a screen. Each click is a small, satisfying commitment. The LED turning on makes it real.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-tag">Fully customisable</div>
+      <h3>Your habits, your labels</h3>
+      <p>Slide in handwritten or printed slips behind each task row. Change your habits monthly, weekly, or daily — no login required, no sync, no friction.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-tag">Always-on display</div>
+      <h3>LCD screen shows you where you stand</h3>
+      <p>A 1602 LCD at the top of the device shows your current progress count and status message at all times. No wake button, no lock screen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SPECS -->
+<div class="specs-section">
+  <div class="section-label">Under the hood</div>
+  <h2>Built from real components,<br><em>by hand.</em></h2>
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="spec-val">5</div>
+      <div class="spec-label">Daily habits tracked</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-val">LCD</div>
+      <div class="spec-label">1602 I²C status screen</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-val">USB</div>
+      <div class="spec-label">USB-C powered</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-val">3D</div>
+      <div class="spec-label">Printed enclosure</div>
+    </div>
+  </div>
+</div>
+
+<!-- WAITLIST -->
+<section class="waitlist-section" id="waitlist">
+  <p class="eyebrow">Early Access</p>
+  <h2>Be first to own<br>a <em>HabitBoard.</em></h2>
+  <p class="waitlist-sub">We're building the first production batch. Join the waitlist and we'll reach out when it's ready — no spam, one email.</p>
+
+  <div class="waitlist-form" id="waitlistForm">
+    <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email">
+    <button onclick="handleWaitlist()">NOTIFY ME</button>
+  </div>
+
+  <div class="waitlist-success" id="waitlistSuccess">
+    You're on the list. We'll be in touch. ✦
+  </div>
+
+  <p class="waitlist-note">No card required. No commitment. Just an email when it's ready.</p>
+  <div class="waitlist-count"><span id="signupCount">—</span> people already waiting</div>
+</section>
+
+<footer>
+  <a href="#" class="nav-logo">HABITBOARD</a>
+  <div class="footer-links">
+    <a href="mailto:admin@xtrec.co.uk">Contact</a>
+    <a href="#">Privacy</a>
+  </div>
+</footer>
+
+<script>
+  // Animate the device demo
+  const tasks = ['Morning run', 'Meditate', 'Read 20 min', 'Cold shower', 'Vitamins'];
+  const rowsEl = document.getElementById('deviceRows');
+  const screenMain = document.getElementById('screenMain');
+  const screenStatus = document.getElementById('screenStatus');
+
+  let state = [false, false, false, false, false];
+
+  function renderRows() {
+    rowsEl.innerHTML = '';
+    tasks.forEach((task, i) => {
+      const row = document.createElement('div');
+      row.className = 'device-row';
+      row.innerHTML = `
+        <div class="device-label">${task}</div>
+        <div class="device-led ${state[i] ? 'on' : ''}" id="led${i}"></div>
+        <div class="device-btn" onclick="toggleRow(${i})"></div>
+      `;
+      rowsEl.appendChild(row);
+    });
+    updateScreen();
+  }
+
+  function toggleRow(i) {
+    state[i] = !state[i];
+    document.getElementById('led' + i).className = 'device-led' + (state[i] ? ' on' : '');
+    updateScreen();
+  }
+
+  function updateScreen() {
+    const done = state.filter(Boolean).length;
+    const total = state.length;
+    if (done === total) {
+      screenMain.textContent = "Day WON! 🎉";
+      screenStatus.textContent = "ALL DONE";
+    } else {
+      screenMain.textContent = "Keep going...";
+      screenStatus.textContent = `DONE: ${done}/${total}`;
+    }
+  }
+
+  // Auto-demo: light up LEDs one by one
+  let demoIndex = 0;
+  let demoInterval;
+
+  function runDemo() {
+    demoInterval = setInterval(() => {
+      if (demoIndex < state.length) {
+        state[demoIndex] = true;
+        renderRows();
+        demoIndex++;
+      } else {
+        clearInterval(demoInterval);
+        setTimeout(() => {
+          state = [false, false, false, false, false];
+          demoIndex = 0;
+          renderRows();
+          setTimeout(runDemo, 1200);
+        }, 2800);
+      }
+    }, 700);
+  }
+
+  renderRows();
+  setTimeout(runDemo, 1200);
+
+  // Waitlist form
+  let signupCount = 47; // seed number
+  document.getElementById('signupCount').textContent = signupCount;
+
+  function handleWaitlist() {
+    const email = document.getElementById('emailInput').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailInput').style.borderBottom = '2px solid #c47b2b';
+      document.getElementById('emailInput').focus();
+      return;
+    }
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.getElementById('waitlistSuccess').style.display = 'block';
+    signupCount++;
+    document.getElementById('signupCount').textContent = signupCount;
+
+    // In production: POST to your backend or Formspree here
+    // fetch('https://formspree.io/f/xaqgealo', { method: 'POST', body: JSON.stringify({email}), headers: {'Content-Type': 'application/json'} })
+  }
+
+  // Allow Enter key on email input
+  document.getElementById('emailInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleWaitlist();
+  });
+</script>
+</body>
+</html>
