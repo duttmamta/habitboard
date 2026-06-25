@@ -617,14 +617,6 @@
     </div>
   </div>
 
-  <div class="photo-placeholder">
-    <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke-width="1.5"/>
-      <circle cx="12" cy="12" r="3" stroke-width="1.5"/>
-      <path d="M9 5V3h6v2" stroke-width="1.5"/>
-    </svg>
-    <div>PRODUCT PHOTOS COMING SOON</div>
-  </div>
 </div>
 </div>
 
@@ -653,30 +645,6 @@
       <div class="feature-tag">Always-on display</div>
       <h3>LCD screen shows you where you stand</h3>
       <p>A 1602 LCD at the top of the device shows your current progress count and status message at all times. No wake button, no lock screen.</p>
-    </div>
-  </div>
-</div>
-
-<!-- SPECS -->
-<div class="specs-section">
-  <div class="section-label">Under the hood</div>
-  <h2>Built from real components,<br><em>by hand.</em></h2>
-  <div class="specs-grid">
-    <div class="spec-item">
-      <div class="spec-val">5</div>
-      <div class="spec-label">Daily habits tracked</div>
-    </div>
-    <div class="spec-item">
-      <div class="spec-val">LCD</div>
-      <div class="spec-label">1602 I²C status screen</div>
-    </div>
-    <div class="spec-item">
-      <div class="spec-val">USB</div>
-      <div class="spec-label">USB-C powered</div>
-    </div>
-    <div class="spec-item">
-      <div class="spec-val">3D</div>
-      <div class="spec-label">Printed enclosure</div>
     </div>
   </div>
 </div>
@@ -792,7 +760,7 @@
     document.getElementById('signupCount').textContent = signupCount;
 
     // In production: POST to your backend or Formspree here
-    // fetch('https://formspree.io/f/xaqgealo', { method: 'POST', body: JSON.stringify({email}), headers: {'Content-Type': 'application/json'} })
+    fetch('https://formspree.io/f/xaqgealo', { method: 'POST', body: JSON.stringify({email}), headers: {'Content-Type': 'application/json'} })
   }
 
   // Allow Enter key on email input
